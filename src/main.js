@@ -11,7 +11,7 @@ if (isDevEnv) {
     require('electron-reloader')(module)
   }
   catch {
-    
+    alert("Error")
   }
 }
 
@@ -34,18 +34,11 @@ const createWindow = () => {
       preload: path.join(__dirname, 'renderer.js'),
       nodeIntegration: true,
       contextIsolation: false,
-    },
-    // titleBarOverlay: {
-    //   color: '#ffff',
-    //   symbolColor: '#ffff'
-    // },
+    }
   });
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
-
-
 
   // Open the DevTools.
   if (isDevEnv) {
@@ -129,11 +122,9 @@ const handleError = () => {
   }).show()
 }
 
-
 ipcMain.on("new-file-triggered", () => {
   saveFileDialog()
 })
-
 
 ipcMain.on("open-file-triggered", () => {
   dialog
@@ -149,11 +140,8 @@ ipcMain.on("open-file-triggered", () => {
         if (error) {
           handleError();
         } else {
-      
           openedFilePath = filePath;
-          // updateRecents(filePath)
           mainWindow.webContents.send("file-opened", { filePath, content });
-
         }
       });
     });
@@ -175,7 +163,6 @@ const saveFile = (filePath, content) => {
     }
   })
   currentFileSaved = true
-  
 }
 
 const saveFileDialog = (content = "") => {
@@ -190,7 +177,6 @@ const saveFileDialog = (content = "") => {
         handleError()
       }
       else {
-        // updateRecents(filePath)
         mainWindow.webContents.send("file-created-saved", filePath,content)
      } 
     })
@@ -204,9 +190,6 @@ const unsavedFileDialog = () => {
     defaultId: 2,
     title: 'Question',
     message: `Do you want to save changes to ${path.parse(openedFilePath).base}?`,
-    // detail: 'Changes will be lost',
-    // checkboxLabel: 'Remember my answer',
-    // checkboxChecked: true,
   };
 
   dialog.showMessageBox(null, options).then(
@@ -217,22 +200,16 @@ const unsavedFileDialog = () => {
         case 2: console.log("Discarded Changes"); ipcMain.emit("open-file-triggered"); break;
       }
     }
- 
   )
-  
 }
-
 
 function updateRecents(path, clear = false) {
   const currentMenu = Menu.getApplicationMenu();
   if (!currentMenu) return;
 
   const recents = currentMenu.items
-  // console.log(typeof currentMenu.getMenuItemById('File'))
-  // recents.forEach(i => console.log(i))
-  console.log("1")
   if (!recents) return;
-  console.log("2")
+
   // Clear menu if requested.
   if (clear) {
     config.set('recentDocuments', []);
@@ -259,6 +236,7 @@ function updateRecents(path, clear = false) {
     items.push(item);
     items.slice(10).forEach((i) => recents.submenu.append(i));
   }
+  
   // Otherwise just add item.
   else recents.submenu.append(item);
 

@@ -1,16 +1,10 @@
 const { ipcRenderer } = require("electron")
 const path = require('path')
 
-// const {currentFileSaved} = require("./main")
-    
 window.addEventListener("DOMContentLoaded", () => {
-    // console.log(currentFileSaved)
     const elements = {
         fileName: document.getElementById("fileName"),
-        fileTextArea: document.getElementById("fileText"),
-        // newFileBtn: document.getElementById("newFileBtn"),
-        // openFileBtn: document.getElementById("openFileBtn"),
-    
+        fileTextArea: document.getElementById("fileText")
     }
 
     const handleFile = (filePath, content="") => {
@@ -19,22 +13,10 @@ window.addEventListener("DOMContentLoaded", () => {
         elements.fileTextArea.removeAttribute("disabled")
         elements.fileTextArea.value = content
         elements.fileTextArea.focus()
-
     }
-    // elements.newFileBtn.addEventListener("click", () => {
-    //     console.log("New File Button Clicked")
-    //     ipcRenderer.send("new-file-triggered")
-    // })
-
-    // elements.openFileBtn.addEventListener("click", () => {
-    //     console.log("Open File Button Clicked")
-    //     ipcRenderer.send("open-file-triggered")
-    // })
 
     ipcRenderer.on("file-created-saved", (_, filePath, content = "") => {
         handleFile(filePath, content)
-
-        
     })
 
     ipcRenderer.on("file-saved", () => {
@@ -43,9 +25,6 @@ window.addEventListener("DOMContentLoaded", () => {
             console.log("!!!!!!")
         }
     })
-    
-    
-
     
     ipcRenderer.on("file-opened", (_, {filePath,content}) => {
         handleFile(filePath,content)
@@ -56,8 +35,5 @@ window.addEventListener("DOMContentLoaded", () => {
         if (fileName.innerHTML[0] !== "*") {
             fileName.innerHTML = "*" + fileName.innerHTML
         }
-      
     })
-
-
 })
